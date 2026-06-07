@@ -58,6 +58,27 @@
     return window.location.hash.includes("access_token=") || window.location.search.includes("code=");
   }
 
+  function readOAuthTokensFromUrl() {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+    if (!accessToken || !refreshToken) return null;
+    return { access_token: accessToken, refresh_token: refreshToken };
+  }
+
+  async function storeUrlSession() {
+    const tokens = readOAuthTokensFromUrl();
+    if (!tokens) return true;
+    const { error } = await client.auth.setSession(tokens);
+    cleanAuthUrl();
+    if (error) {
+      console.error("BOAMEC Google session error:", error);
+      setLoginMessage("Nao consegui concluir o login do Google. Tente novamente.");
+      return false;
+    }
+    return true;
+  }
+
   function applyProfileToState(profile, company, subscription) {
     const permissions = profile.permissoes?.length ? profile.permissoes : rolePermissions[profile.cargo] || rolePermissions.Atendente;
     state.currentUserId = profile.id;
@@ -167,17 +188,23 @@
     saveState();
   }
 
-  async function hydrateSession(attempt = 0) {
+  async function hydrateSession(attempt = 0, authCallback = isAuthCallback()) {
+    if (attempt === 0 && authCallback) {
+      setLoginMessage("Finalizando acesso com Google...");
+      const stored = await storeUrlSession();
+      if (!stored) return false;
+    }
+
     const { data: sessionData } = await client.auth.getSession();
     const authUser = sessionData.session?.user;
     if (!authUser) {
-      if (isAuthCallback() && attempt < 8) {
+      if (authCallback && attempt < 8) {
         setLoginMessage("Finalizando acesso com Google...");
         await new Promise((resolve) => setTimeout(resolve, 350));
-        return hydrateSession(attempt + 1);
+        return hydrateSession(attempt + 1, authCallback);
       }
       window.BOAMEC_BACKEND.user = null;
-      setLoginMessage("");
+      setLoginMessage(authCallback ? "Nao consegui finalizar o login do Google. Tente novamente." : "");
       return false;
     }
 
@@ -208,6 +235,8 @@
       } else {
         console.error("BOAMEC trial error:", trialError);
         setLoginMessage(`Nao foi possivel criar o teste gratis: ${trialError.message || "erro no cadastro"}.`);
+        await client.auth.signOut();
+        return false;
       }
     }
 
