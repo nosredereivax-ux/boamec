@@ -166,11 +166,32 @@
       return false;
     }
 
-    const { data: profile, error: profileError } = await client
+    let { data: profile, error: profileError } = await client
       .from("usuarios")
       .select("id,empresa_id,nome,email,cargo,status,permissoes")
       .eq("id", authUser.id)
       .single();
+
+    if (profileError || !profile) {
+      const name = authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email?.split("@")[0] || "Usuario";
+      const companyName = authUser.user_metadata?.company_name || `Oficina de ${name}`;
+      const { error: trialError } = await client.rpc("criar_empresa_trial", {
+        p_nome_fantasia: companyName,
+        p_razao_social: companyName,
+        p_email: authUser.email,
+        p_usuario_nome: name
+      });
+
+      if (!trialError) {
+        const profileResult = await client
+          .from("usuarios")
+          .select("id,empresa_id,nome,email,cargo,status,permissoes")
+          .eq("id", authUser.id)
+          .single();
+        profile = profileResult.data;
+        profileError = profileResult.error;
+      }
+    }
 
     if (profileError || !profile || profile.status !== "ativo") {
       await client.auth.signOut();
@@ -213,6 +234,18 @@
       setScreen("home");
       toast("Acesso liberado com seguranca.");
     }
+  };
+
+  loginWithGoogle = async function () {
+    setLoginMessage("Abrindo login do Google...");
+    const { error } = await client.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: { access_type: "offline", prompt: "consent" }
+      }
+    });
+    if (error) setLoginMessage("Nao foi possivel abrir o login do Google. Verifique o provedor no Supabase.");
   };
 
   logoutUser = async function () {

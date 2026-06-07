@@ -133,6 +133,30 @@ body.login-active .login-screen {
   font-weight: 900;
 }
 
+.login-google {
+  min-height: 52px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.google-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--soft);
+  color: #4285f4;
+  font-weight: 950;
+}
+
 .login-security {
   margin-top: 18px;
   padding: 14px;
