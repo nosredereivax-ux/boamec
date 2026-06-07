@@ -1,0 +1,15 @@
+{
+  "name": "boamec",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BOAMEC ERP SaaS para auto mecanicas e centros automotivos.",
+  "type": "module",
+  "scripts": {
+    "build": "node ./scripts/build-config.mjs",
+    "dev": "node ./scripts/build-config.mjs && npx serve .",
+    "check": "node --check app.js && node --check supabase-production.js && node --check scripts/build-config.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
