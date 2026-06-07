@@ -55,16 +55,73 @@ body.login-active .app-shell {
 
 .login-screen {
   min-height: 100vh;
-  padding: 28px;
+  padding: 40px;
   display: none;
-  place-items: center;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(360px, 460px);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(28px, 6vw, 92px);
+  position: relative;
+  overflow: hidden;
   background:
-    linear-gradient(135deg, rgba(20, 20, 23, 0.94), rgba(20, 20, 23, 0.82)),
-    var(--soft);
+    linear-gradient(90deg, rgba(8, 11, 25, 0.94) 0%, rgba(8, 11, 25, 0.78) 42%, rgba(8, 11, 25, 0.55) 100%),
+    url("./assets/login-car-bg.jpg") center / cover no-repeat,
+    #11131b;
+}
+
+.login-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 25% 18%, rgba(83, 104, 232, 0.26), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.38));
+  pointer-events: none;
+}
+
+.login-screen > * {
+  position: relative;
+  z-index: 1;
 }
 
 body.login-active .login-screen {
   display: grid;
+}
+
+.login-hero {
+  max-width: 620px;
+  color: var(--white);
+}
+
+.login-kicker {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.login-hero h2 {
+  margin: 20px 0 12px;
+  color: var(--white);
+  font-size: clamp(54px, 8vw, 108px);
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.login-hero p {
+  max-width: 520px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.18;
+  font-weight: 850;
 }
 
 .login-card {
@@ -2208,6 +2265,38 @@ body.login-active .login-screen {
 }
 
 @media (max-width: 860px) {
+  .login-screen {
+    min-height: 100svh;
+    padding: 22px 14px;
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 22px;
+    background:
+      linear-gradient(180deg, rgba(8, 11, 25, 0.82), rgba(8, 11, 25, 0.96)),
+      url("./assets/login-car-bg.jpg") center / cover no-repeat,
+      #11131b;
+  }
+
+  .login-hero {
+    max-width: 460px;
+    justify-self: center;
+    text-align: left;
+  }
+
+  .login-hero h2 {
+    margin: 14px 0 8px;
+    font-size: 50px;
+  }
+
+  .login-hero p {
+    font-size: 20px;
+  }
+
+  .login-card {
+    justify-self: center;
+    padding: 22px;
+  }
+
   .app-shell {
     display: block;
   }
@@ -2466,6 +2555,33 @@ body.login-active .login-screen {
 }
 
 @media (max-width: 410px) {
+  .login-screen {
+    padding: 16px 10px;
+    gap: 16px;
+  }
+
+  .login-kicker {
+    min-height: 30px;
+    font-size: 11px;
+  }
+
+  .login-hero h2 {
+    font-size: 42px;
+  }
+
+  .login-hero p {
+    font-size: 17px;
+  }
+
+  .login-brand h1 {
+    font-size: 25px;
+  }
+
+  .login-brand-mark {
+    width: 50px;
+    height: 50px;
+  }
+
   .main-area {
     padding-left: 10px;
     padding-right: 10px;
