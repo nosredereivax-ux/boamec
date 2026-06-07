@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mario Galinha Auto Mecânica</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <section class="login-screen" id="login-screen" aria-labelledby="login-title">
+      <div class="login-card">
+        <div class="login-brand">
+          <span class="brand-mark login-brand-mark">MG</span>
+          <div>
+            <p class="eyebrow">Acesso seguro</p>
+            <h1 id="login-title">Entrar no sistema</h1>
+            <span id="login-trial-copy">Teste gratis por 30 dias</span>
+          </div>
+        </div>
+
+        <form class="login-form" id="login-form">
+          <label class="field">
+            <span>E-mail</span>
+            <input id="login-email" type="email" autocomplete="username" placeholder="admin@oficina.com" />
+          </label>
+          <label class="field">
+            <span>Senha</span>
+            <input id="login-password" type="password" autocomplete="current-password" placeholder="Digite sua senha" />
+          </label>
+          <label class="login-check">
+            <input id="login-remember" type="checkbox" checked />
+            <span>Manter conectado neste aparelho</span>
+          </label>
+          <p class="login-error" id="login-error" role="alert"></p>
+          <button class="login-submit" data-action="login" type="submit">Entrar</button>
+        </form>
+
+        <div class="login-security">
+          <strong>Seguranca do acesso</strong>
+          <span>Perfis, permissoes por modulo, sessao local e teste liberado por 30 dias.</span>
+          <small>Use o usuario cadastrado pela empresa.</small>
+        </div>
+      </div>
+    </section>
+
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegação principal">
+        <div class="brand">
+          <span class="brand-mark">MG</span>
+          <span>
+            <strong>Mario Galinha</strong>
+            <small data-current-user-name>Mario</small>
+          </span>
+        </div>
+
+        <nav class="rail-nav">
+          <button class="nav-item active" data-screen="home" type="button">
+            <span data-icon="home"></span>
+            <span>Início</span>
+          </button>
+          <button class="nav-item" data-screen="schedule" type="button">
+            <span data-icon="calendar"></span>
+            <span>Agenda</span>
+          </button>
+          <button class="nav-item primary" data-action="new-os" type="button">
+            <span data-icon="plus"></span>
+            <span>Nova OS</span>
+          </button>
+          <button class="nav-item" data-screen="finance" type="button">
+            <span data-icon="wallet"></span>
+            <span>Financeiro</span>
+          </button>
+          <button class="nav-item" data-action="open-module" data-module="Clientes" type="button">
+            <span data-icon="user"></span>
+            <span>Clientes</span>
+          </button>
+          <button class="nav-item" data-action="open-module" data-module="Mecânicos" type="button">
+            <span data-icon="wrench"></span>
+            <span>Mecânicos</span>
+          </button>
+          <button class="nav-item" data-action="open-module" data-module="Produtos" type="button">
+            <span data-icon="box"></span>
+            <span>Produtos</span>
+          </button>
+          <button class="nav-item" data-screen="reports" type="button">
+            <span data-icon="chart"></span>
+            <span>Relatórios</span>
+          </button>
+          <button class="nav-item" data-screen="menu" type="button">
+            <span data-icon="menu"></span>
+            <span>Menu</span>
+          </button>
+          <button class="nav-item" data-action="logout" type="button">
+            <span data-icon="logout"></span>
+            <span>Sair</span>
+          </button>
+        </nav>
+
+        <div class="trial-chip" id="trial-status">Teste gratis: 30 dias</div>
+
+        <div class="sidebar-summary">
+          <p>Conheça nossas soluções que conectam</p>
+          <a class="support-link" href="https://www.boasolucoesdigitais.com.br" target="_blank" rel="noopener noreferrer">Clique aqui</a>
+          <span>Suporte</span>
+          <strong class="support-phone"><span data-icon="message"></span>(61) 98342-5490</strong>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <section class="screen active" id="screen-home" aria-labelledby="home-title">
+          <header class="topbar">
+            <div>
+              <h1 id="home-title">Oficina em movimento</h1>
+            </div>
+          </header>
+
+          <button class="search-hero" data-screen="search" type="button">
+            <span data-icon="search"></span>
+            <span>Buscar cliente, placa ou OS</span>
+          </button>
+
+          <div class="schedule-grid home-schedule">
+            <section class="schedule-panel" aria-labelledby="home-schedule-today-title">
+              <div class="section-heading compact-heading">
+                <h2 id="home-schedule-today-title">Serviços agendados de hoje</h2>
+                <button class="text-button" data-action="new-appointment" type="button">Agendar</button>
+              </div>
+              <div class="appointment-list" id="home-schedule-today-list"></div>
+            </section>
+
+            <section class="schedule-panel" aria-labelledby="home-schedule-week-title">
+              <div class="section-heading compact-heading">
+                <h2 id="home-schedule-week-title">Agenda da semana</h2>
+                <button class="text-button" data-screen="schedule" type="button">Ver agenda</button>
+              </div>
+              <div class="week-agenda" id="home-schedule-week-list"></div>
+            </section>
+          </div>
+
+          <section aria-labelledby="today-title">
+            <div class="home-os-tabs" aria-label="Filtros de OS">
+              <button class="active" data-action="home-order-filter" data-filter="progress" type="button">OS em andamento</button>
+              <button data-action="home-order-filter" data-filter="payment" type="button">OS Pagamento em aberto</button>
+              <button data-action="home-order-filter" data-filter="completed" type="button">OS concluídas</button>
+            </div>
+            <h2 class="sr-only" id="today-title">Ordens de serviço</h2>
+            <div class="order-list" id="home-orders"></div>
+          </section>
+        </section>
+
+        <section class="screen" id="screen-search" aria-labelledby="search-title">
+          <header class="topbar compact">
+            <div>
+              <p class="eyebrow">Busca global</p>
+              <h1 id="search-title">Encontre em segundos</h1>
+            </div>
+          </header>
+
+          <label class="global-search">
+            <span data-icon="search"></span>
+            <input id="global-search-input" type="search" autocomplete="off" placeholder="Nome, placa, telefone, mecânico..." />
+          </label>
+
+          <div class="result-groups" id="result-groups"></div>
+        </section>
+
+        <section class="screen" id="screen-schedule" aria-labelledby="schedule-title">
+          <header class="topbar compact">
+            <div>
+              <p class="eyebrow">Agendamento</p>
+              <h1 id="schedule-title">Agenda da oficina</h1>
+            </div>
+            <button class="primary-button" data-action="new-appointment" type="button"><span data-icon="plus"></span>Agendar serviço</button>
+          </header>
+
+          <div class="schedule-grid">
+            <section class="schedule-panel" aria-labelledby="schedule-today-title">
+              <div class="section-heading compact-heading">
+                <h2 id="schedule-today-title">Serviços agendados de hoje</h2>
+              </div>
+              <div class="appointment-list" id="schedule-today-list"></div>
+            </section>
+
+            <section class="schedule-panel" aria-labelledby="schedule-week-title">
+              <div class="section-heading compact-heading">
+                <h2 id="schedule-week-title">Agenda da semana</h2>
+              </div>
+              <div class="week-agenda" id="schedule-week-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-new-os" aria-labelledby="new-os-title">
+          <header class="wizard-header">
+            <button class="icon-button" data-screen="home" type="button" title="Voltar" aria-label="Voltar">
+              <span data-icon="arrow-left"></span>
+            </button>
+            <div>
+              <p class="eyebrow" id="wizard-kicker">Nova OS</p>
+              <h1 id="new-os-title">Fluxo guiado</h1>
+            </div>
+          </header>
+
+          <div class="stepper" aria-label="Etapas da ordem de serviço">
+            <span class="step active"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+            <span class="step"></span>
+          </div>
+
+          <form class="wizard-card" id="os-form">
+            <div class="wizard-step active" data-step="0">
+              <h2>Cliente</h2>
+              <label class="field search-field">
+                <span>Buscar ou cadastrar cliente</span>
+                <input name="client" type="text" placeholder="Digite nome ou telefone do cliente" />
+              </label>
+              <div class="search-results compact-results" id="client-search-results"></div>
+              <button class="soft-button" data-action="open-client-form" data-context="wizard" type="button">
+                <span data-icon="plus"></span>Cadastrar novo cliente
+              </button>
+            </div>
+
+            <div class="wizard-step" data-step="1">
+              <h2>Veículo</h2>
+              <div class="vehicle-pick" id="vehicle-pick"></div>
+              <div class="inline-form hidden" id="new-vehicle-fields">
+                <label class="field">
+                  <span>Modelo do novo veículo</span>
+                  <input name="newVehicleName" type="text" placeholder="Ex: Chevrolet Onix" />
+                </label>
+                <label class="field">
+                  <span>Placa</span>
+                  <input name="newVehiclePlate" type="text" placeholder="ABC-1D23" />
+                </label>
+                <label class="field">
+                  <span>Cor do veículo</span>
+                  <input name="newVehicleColor" type="text" placeholder="Ex: Prata" />
+                </label>
+                <button class="soft-button" data-action="confirm-new-vehicle" type="button">
+                  <span data-icon="check"></span>Usar este veículo
+                </button>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="2">
+              <h2>Entrada</h2>
+              <label class="field"><span>KM do veículo</span><input name="km" inputmode="numeric" placeholder="Digite o KM atual" /></label>
+              <label class="field">
+                <span>Situação</span>
+                <select name="situation">
+                  <option>Aguardando aprovação</option>
+                  <option>Em andamento</option>
+                  <option>Concluído</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="wizard-step" data-step="3">
+              <h2>Serviços e peças</h2>
+              <label class="field">
+                <span>Problema relatado pelo cliente</span>
+                <textarea name="customerComplaint" rows="3" placeholder="Ex: Cliente relatou barulho ao frear e volante tremendo acima de 80 km/h"></textarea>
+              </label>
+              <div class="item-stack" id="service-items"></div>
+              <div class="action-row">
+                <button class="soft-button" data-action="show-service-form" type="button"><span data-icon="plus"></span>Serviço</button>
+                <button class="soft-button" data-action="show-part-form" type="button"><span data-icon="plus"></span>Peça</button>
+              </div>
+              <div class="inline-form hidden" id="service-entry-form">
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Serviço executado</span>
+                    <input name="serviceName" type="text" placeholder="Ex: Alinhamento e balanceamento" />
+                  </label>
+                  <label class="field">
+                    <span>Valor da mão de obra</span>
+                    <input name="serviceValue" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" />
+                  </label>
+                </div>
+                <button class="soft-button" data-action="add-service" type="button"><span data-icon="check"></span>Adicionar serviço</button>
+              </div>
+              <div class="inline-form hidden" id="part-entry-form">
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Peça utilizada</span>
+                    <input name="partName" type="text" placeholder="Ex: Pastilha de freio" />
+                  </label>
+                  <label class="field">
+                    <span>Valor da peça</span>
+                    <input name="partValue" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" />
+                  </label>
+                </div>
+                <button class="soft-button" data-action="add-part" type="button"><span data-icon="check"></span>Adicionar peça</button>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="4">
+              <h2>Mecânico</h2>
+              <div class="mechanic-grid">
+                <button class="mechanic-card selected" type="button"><strong>Carlos</strong><span>3 OS hoje</span></button>
+                <button class="mechanic-card" type="button"><strong>Rafael</strong><span>2 OS hoje</span></button>
+                <button class="mechanic-card" type="button"><strong>Diego</strong><span>1 OS hoje</span></button>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="5">
+              <h2>Valores</h2>
+              <div class="total-box">
+                <span>Mão de obra</span><strong>R$ 0,00</strong>
+                <span>Peças</span><strong>R$ 0,00</strong>
+                <span>Comissão</span><strong>R$ 0,00</strong>
+                <span>Total</span><strong>R$ 0,00</strong>
+              </div>
+              <div class="payment-options">
+                <button class="pill selected" type="button">Pendente</button>
+                <button class="pill" type="button">Pago agora</button>
+                <button class="pill" type="button">Parcial</button>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="6">
+              <h2>Finalizar</h2>
+              <div class="confirm-card">
+                <strong>Nova OS</strong>
+                <span>Cliente · Veículo · Placa</span>
+                <span>Total R$ 0,00 · Mecânico</span>
+              </div>
+              <div class="finish-grid">
+                <button class="soft-button" data-action="save-os" type="button"><span data-icon="save"></span>Salvar</button>
+                <button class="soft-button" data-action="print-current-os" type="button"><span data-icon="printer"></span>Imprimir</button>
+                <button class="soft-button" data-action="pdf-current-os" type="button"><span data-icon="file"></span>PDF</button>
+                <button class="soft-button green" data-action="whatsapp-current-os" type="button"><span data-icon="message"></span>WhatsApp</button>
+              </div>
+            </div>
+
+            <aside class="os-summary" id="os-summary" aria-label="Resumo da ordem de serviço"></aside>
+
+            <footer class="wizard-actions">
+              <button class="secondary-button" id="prev-step" type="button">Voltar</button>
+              <button class="primary-button" id="next-step" type="button">Continuar</button>
+            </footer>
+          </form>
+        </section>
+
+        <section class="screen" id="screen-finance" aria-labelledby="finance-title">
+          <header class="topbar compact">
+            <div>
+              <p class="eyebrow">Financeiro</p>
+              <h1 id="finance-title">Controle financeiro</h1>
+            </div>
+            <div class="finance-actions">
+              <button class="primary-small" data-action="quick-payment" type="button"><span data-icon="plus"></span>Receber</button>
+              <button class="primary-small dark" data-action="new-payable" type="button"><span data-icon="plus"></span>Conta</button>
+            </div>
+          </header>
+
+          <div class="finance-strip">
+            <article><span>A receber</span><strong id="finance-receivable">R$ 2.840</strong></article>
+            <article><span>A pagar</span><strong id="finance-payables-total">R$ 0</strong></article>
+            <article><span>Comissões pendentes</span><strong id="finance-commissions">R$ 690</strong></article>
+            <article><span>Pago hoje</span><strong id="finance-paid-today">R$ 4.120</strong></article>
+          </div>
+
+          <div class="finance-tabs" aria-label="Áreas do financeiro">
+            <button data-action="finance-tab" data-tab="receivable" type="button">Receber</button>
+            <button data-action="finance-tab" data-tab="payable" type="button">Pagar</button>
+            <button data-action="finance-tab" data-tab="commissions" type="button">Comissões</button>
+          </div>
+
+          <div class="finance-panel" id="finance-panel-receivable">
+            <div class="section-heading">
+              <h2>Contas a receber</h2>
+              <button class="text-button" data-action="toggle-payment-filter" type="button">Filtrar</button>
+            </div>
+            <div class="payment-list" id="payments"></div>
+          </div>
+
+          <div class="finance-panel" id="finance-panel-payable">
+            <div class="section-heading">
+              <h2>Contas a pagar</h2>
+              <button class="text-button" data-action="new-payable" type="button">Nova conta</button>
+            </div>
+            <div class="payment-list" id="payables"></div>
+          </div>
+
+          <div class="finance-panel" id="finance-panel-commissions">
+            <div class="section-heading">
+              <h2>Comissões dos mecânicos</h2>
+              <div class="finance-filter">
+                <button class="text-button" data-action="filter-commissions" data-filter="pending" type="button">Pendentes</button>
+                <button class="text-button" data-action="filter-commissions" data-filter="paid" type="button">Pagas</button>
+                <button class="text-button" data-action="filter-commissions" data-filter="all" type="button">Todas</button>
+              </div>
+            </div>
+            <div class="commission-toolbar">
+              <label class="field">
+                <span>Mecânico</span>
+                <select id="commission-mechanic-filter"></select>
+              </label>
+              <div class="commission-paybox">
+                <span>Selecionado para pagar</span>
+                <strong id="selected-commission-total">R$ 0,00</strong>
+                <button class="soft-button" data-action="select-visible-commissions" type="button">Selecionar pendentes</button>
+                <button class="primary-small" data-action="pay-selected-commissions" type="button">Pagar selecionadas</button>
+              </div>
+            </div>
+            <div class="commission-summary" id="commission-summary"></div>
+            <div class="commission-list" id="commissions"></div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-reports" aria-labelledby="reports-title">
+          <header class="topbar compact">
+            <div>
+              <p class="eyebrow">Relatórios</p>
+              <h1 id="reports-title">Visão da empresa</h1>
+            </div>
+          </header>
+
+          <div class="report-tabs" aria-label="Modelos de relatórios">
+            <button data-action="report-tab" data-tab="orders" type="button">OS emitidas</button>
+            <button data-action="report-tab" data-tab="payables" type="button">A pagar</button>
+            <button data-action="report-tab" data-tab="commissions" type="button">Comissões</button>
+            <button data-action="report-tab" data-tab="revenue" type="button">Receita</button>
+          </div>
+
+          <section class="report-panel" id="report-panel-orders">
+            <div class="section-heading">
+              <h2>OS emitidas no período</h2>
+              <button class="text-button" data-action="print-report" data-report="orders" type="button">Imprimir</button>
+            </div>
+            <div class="report-filters">
+              <label class="field"><span>Data inicial</span><input id="report-start" type="date" /></label>
+              <label class="field"><span>Data final</span><input id="report-end" type="date" /></label>
+            </div>
+            <div class="report-metrics" id="report-orders-metrics"></div>
+            <div class="report-list" id="report-orders-list"></div>
+          </section>
+
+          <section class="report-panel" id="report-panel-payables">
+            <div class="section-heading">
+              <h2>Pagamentos a fazer</h2>
+              <div class="finance-filter">
+                <button class="text-button" data-action="report-payable-range" data-range="today" type="button">Hoje</button>
+                <button class="text-button" data-action="report-payable-range" data-range="week" type="button">Semana</button>
+              </div>
+            </div>
+            <div class="report-metrics" id="report-payables-metrics"></div>
+            <div class="report-list" id="report-payables-list"></div>
+          </section>
+
+          <section class="report-panel" id="report-panel-commissions">
+            <div class="section-heading">
+              <h2>Comissões por mecânico</h2>
+              <button class="text-button" data-screen="finance" type="button">Ir para financeiro</button>
+            </div>
+            <div class="report-metrics" id="report-commissions-metrics"></div>
+            <div class="report-list" id="report-commissions-list"></div>
+          </section>
+
+          <section class="report-panel" id="report-panel-revenue">
+            <div class="section-heading">
+              <h2>Receita por período</h2>
+              <button class="text-button" data-action="print-report" data-report="revenue" type="button">Imprimir</button>
+            </div>
+            <div class="report-metrics" id="report-revenue-metrics"></div>
+            <div class="report-list" id="report-revenue-list"></div>
+          </section>
+        </section>
+
+        <section class="screen" id="screen-menu" aria-labelledby="menu-title">
+          <header class="topbar compact">
+            <div>
+              <p class="eyebrow">Menu</p>
+              <h1 id="menu-title">Operações</h1>
+            </div>
+          </header>
+          <div class="menu-grid">
+            <button class="menu-card" data-action="open-module" data-module="Clientes" type="button"><span data-icon="user"></span><strong>Clientes</strong><small>Cadastro e histórico</small></button>
+            <button class="menu-card" data-action="open-module" data-module="Ordens" type="button"><span data-icon="clipboard"></span><strong>Ordens</strong><small>Abertas, finalizadas e canceladas</small></button>
+            <button class="menu-card" data-screen="schedule" type="button"><span data-icon="calendar"></span><strong>Agenda</strong><small>Agendamentos e conversão em OS</small></button>
+            <button class="menu-card" data-action="open-module" data-module="Produtos" type="button"><span data-icon="box"></span><strong>Produtos</strong><small>Peças e estoque</small></button>
+            <button class="menu-card" data-action="open-module" data-module="Mecânicos" type="button"><span data-icon="wrench"></span><strong>Mecânicos</strong><small>Comissões e produtividade</small></button>
+            <button class="menu-card" data-screen="reports" type="button"><span data-icon="chart"></span><strong>Relatórios</strong><small>Receita e desempenho</small></button>
+            <button class="menu-card" data-action="open-module" data-module="Empresa" type="button"><span data-icon="file"></span><strong>Empresa</strong><small>Dados do cabeçalho da OS</small></button>
+            <button class="menu-card" data-action="open-module" data-module="Marca" type="button"><span data-icon="file"></span><strong>Marca do sistema</strong><small>Logo e cores automáticas</small></button>
+            <button class="menu-card" data-action="open-module" data-module="Usuários" type="button"><span data-icon="user-check"></span><strong>Usuários</strong><small>Acessos e permissões</small></button>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Navegação inferior">
+        <button class="bottom-item active" data-screen="home" type="button"><span data-icon="home"></span><small>Início</small></button>
+        <button class="bottom-item" data-screen="search" type="button"><span data-icon="search"></span><small>Buscar</small></button>
+        <button class="bottom-fab" data-action="new-os" type="button" aria-label="Nova Ordem de Serviço"><span data-icon="plus"></span></button>
+        <button class="bottom-item" data-screen="finance" type="button"><span data-icon="wallet"></span><small>Financeiro</small></button>
+        <button class="bottom-item" data-screen="menu" type="button"><span data-icon="menu"></span><small>Menu</small></button>
+      </nav>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">OS salva com sucesso</div>
+    <div class="modal-backdrop" id="modal" aria-hidden="true">
+      <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="icon-button modal-close" data-action="close-modal" type="button" title="Fechar" aria-label="Fechar">
+          <span data-icon="plus"></span>
+        </button>
+        <p class="eyebrow" id="modal-kicker">Detalhes</p>
+        <h2 id="modal-title">Registro</h2>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-actions" id="modal-actions"></div>
+      </section>
+    </div>
+
+    <script src="./config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./app.js"></script>
+    <script src="./supabase-production.js"></script>
+  </body>
+</html>

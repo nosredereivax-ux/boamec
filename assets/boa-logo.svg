@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1219 571" role="img" aria-labelledby="title desc" preserveAspectRatio="xMidYMid meet">
+  <title id="title">BOA Solucoes Digitais</title>
+  <desc id="desc">Logo BOA Solucoes que conectam</desc>
+  <defs>
+    <linearGradient id="boa-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14a8df"/>
+      <stop offset="0.48" stop-color="#5269dc"/>
+      <stop offset="1" stop-color="#a42fde"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#boa-gradient)">
+    <text x="-12" y="444" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="560" font-weight="900" letter-spacing="-42">BOA</text>
+  </g>
+  <circle cx="392" cy="272" r="58" fill="#a42fde"/>
+  <circle cx="790" cy="272" r="58" fill="#14a8df"/>
+  <path d="M482 315c62 58 154 58 216 0" fill="none" stroke="#a42fde" stroke-width="48" stroke-linecap="round"/>
+  <path d="M484 230c62-58 152-58 214 0" fill="none" stroke="#14a8df" stroke-width="48" stroke-linecap="round"/>
+  <text x="0" y="548" fill="#14a8df" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="77" font-weight="900" letter-spacing="1">SOLUCOES QUE CONECTAM</text>
+</svg>
