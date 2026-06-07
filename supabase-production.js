@@ -48,6 +48,16 @@
     return Math.max(0, Math.ceil((new Date(subscription.data_fim) - Date.now()) / 86400000));
   }
 
+  function cleanAuthUrl() {
+    if (window.location.hash.includes("access_token=") || window.location.search.includes("code=")) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
+
+  function isAuthCallback() {
+    return window.location.hash.includes("access_token=") || window.location.search.includes("code=");
+  }
+
   function applyProfileToState(profile, company, subscription) {
     const permissions = profile.permissoes?.length ? profile.permissoes : rolePermissions[profile.cargo] || rolePermissions.Atendente;
     state.currentUserId = profile.id;
@@ -157,10 +167,15 @@
     saveState();
   }
 
-  async function hydrateSession() {
+  async function hydrateSession(attempt = 0) {
     const { data: sessionData } = await client.auth.getSession();
     const authUser = sessionData.session?.user;
     if (!authUser) {
+      if (isAuthCallback() && attempt < 8) {
+        setLoginMessage("Finalizando acesso com Google...");
+        await new Promise((resolve) => setTimeout(resolve, 350));
+        return hydrateSession(attempt + 1);
+      }
       window.BOAMEC_BACKEND.user = null;
       setLoginMessage("");
       return false;
@@ -190,6 +205,9 @@
           .single();
         profile = profileResult.data;
         profileError = profileResult.error;
+      } else {
+        console.error("BOAMEC trial error:", trialError);
+        setLoginMessage(`Nao foi possivel criar o teste gratis: ${trialError.message || "erro no cadastro"}.`);
       }
     }
 
@@ -217,6 +235,7 @@
     applyProfileToState(profile, company, subscription);
     await loadTenantData(profile.empresa_id);
     localStorage.setItem(SESSION_KEY, JSON.stringify({ userId: profile.id, loggedAt: new Date().toISOString(), mode: "supabase" }));
+    cleanAuthUrl();
     showApp();
     renderAll();
     return true;
