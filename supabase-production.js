@@ -154,14 +154,26 @@
   }
 
   async function storeUrlSession() {
-    const tokens = readOAuthTokensFromUrl();
-    if (!tokens) return true;
-    const { error } = await client.auth.setSession(tokens);
-    cleanAuthUrl();
-    if (error) {
-      console.error("[BOAMEC] Erro ao definir sessão OAuth:", error);
-      callShowLogin(`Não foi possível concluir o login com Google: ${error.message || "tente novamente"}.`);
-      return false;
+    if (!isOAuthCallback()) return true;
+
+    try {
+      const hash = window.location.hash.replace(/^#/, "");
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+
+      if (accessToken && refreshToken) {
+        const { error } = await client.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+        if (error) {
+          console.warn("[BOAMEC] Aviso no setSession:", error.message);
+        }
+      }
+      cleanAuthUrl();
+    } catch (err) {
+      console.error("[BOAMEC] Erro no storeUrlSession:", err);
     }
     return true;
   }
@@ -414,10 +426,21 @@
   }
 
   function showOnboarding() {
-    document.body.classList.add("login-active");
+    document.body.classList.remove("login-active");
     document.body.classList.add("onboarding-active");
+
     const screen = document.getElementById("onboarding-screen");
     if (screen) screen.style.display = "flex";
+
+    // Preenche nome do usuário vindo do Google OAuth (metadata)
+    const user = window.BOAMEC_BACKEND.user;
+    if (user) {
+      const googleName = user.user_metadata?.full_name || user.user_metadata?.name || "";
+      const userInput = document.getElementById("onboarding-user-name");
+      if (userInput && googleName && !userInput.value) {
+        userInput.value = googleName;
+      }
+    }
   }
 
   function hideOnboarding() {
