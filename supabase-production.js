@@ -1022,8 +1022,62 @@
   });
 
   /* ─────────────────────────────────────────────
-     11. Inicialização
+     11. Processamento de retorno OAuth
   ───────────────────────────────────────────── */
+  async function processOAuthCallback() {
+    let sessionData = null;
+    let attempts = 0;
+    const maxAttempts = 10; // até 3 segundos de espera (10 x 300ms)
+
+    while (attempts < maxAttempts) {
+      const { data, error } = await client.auth.getSession();
+      if (error) {
+        console.error("[BOAMEC] Erro ao obter sessão OAuth:", error.message);
+        cleanAuthUrl();
+        callShowLogin(`Erro de autenticação: ${error.message}`);
+        return;
+      }
+      if (data?.session?.user) {
+        sessionData = data;
+        break;
+      }
+      attempts++;
+      await new Promise(r => setTimeout(r, 300));
+    }
+
+    cleanAuthUrl();
+
+    if (!sessionData?.session?.user) {
+      console.warn("[BOAMEC] Sessão OAuth não encontrada.");
+      callShowLogin("Não foi possível autenticar com o Google. Tente novamente.");
+      return;
+    }
+
+    const user = sessionData.session.user;
+    window.BOAMEC_BACKEND.user = user;
+    _sessionInitialized = true;
+
+    console.info("[BOAMEC] Sessão OAuth obtida para:", user.email);
+
+    const { profile, company, subscription } = await fetchProfileAndCompany(user.id);
+
+    if (!profile) {
+      console.info("[BOAMEC] Usuário novo - exibindo onboarding.");
+      showOnboarding();
+      return;
+    }
+
+    if (!checkSubscriptionBlock(subscription)) {
+      await client.auth.signOut();
+      return;
+    }
+
+    applyProfileToAppState(profile, company, subscription);
+    callShowApp();
+    callSetScreen("home");
+  }
+
+
   function init() {
     const googleBtn = document.querySelector("[data-action='google-login']");
     if (googleBtn) googleBtn.classList.remove("hidden");
@@ -1045,10 +1099,11 @@
     // Se NÃO for um retorno OAuth (URL sem #access_token), verifica sessão salva normalmente
     // Para retornos OAuth, o onAuthStateChange cuida de tudo ao processar o token da URL
     const isOAuth = window.location.hash.includes("access_token=") || window.location.search.includes("code=");
-    if (!isOAuth) {
-      loadSession();
+    if (isOAuth) {
+      console.info("[BOAMEC] Retorno OAuth detectado. Processando...");
+      processOAuthCallback();
     } else {
-      console.info("[BOAMEC] Retorno OAuth detectado. Aguardando onAuthStateChange...");
+      loadSession();
     }
   }
 
