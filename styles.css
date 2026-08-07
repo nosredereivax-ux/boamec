@@ -204,7 +204,7 @@ body.login-active .login-screen {
   background: rgba(255, 255, 255, 0.08);
   color: var(--white);
   font-weight: 900;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   gap: 10px;

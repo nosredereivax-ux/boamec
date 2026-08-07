@@ -11,13 +11,14 @@
      0. Guarda de inicialização
   ───────────────────────────────────────────── */
   const cfg = window.BOAMEC_CONFIG || {};
+  const hasSupabaseLib = Boolean(window.supabase && typeof window.supabase.createClient === "function");
   const enabled = Boolean(
-    cfg.productionAuth && cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase
+    cfg.productionAuth && cfg.supabaseUrl && cfg.supabaseAnonKey && hasSupabaseLib
   );
 
   if (!enabled) {
     window.BOAMEC_BACKEND = { enabled: false };
-    console.info("[BOAMEC] Modo local ativo (productionAuth desativado ou chaves ausentes).");
+    console.info("[BOAMEC] Modo local ativo (productionAuth desativado ou bibliotecas ausentes).");
     return;
   }
 
