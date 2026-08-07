@@ -38,7 +38,7 @@
           </label>
           <p class="login-error" id="login-error" role="alert"></p>
           <button class="login-submit" data-action="login" type="submit">Entrar</button>
-          <button class="login-google hidden" data-action="google-login" type="button">
+          <button class="login-google" data-action="google-login" type="button">
             <span class="google-mark">G</span>
             <span>Entrar com Google</span>
           </button>
@@ -47,6 +47,67 @@
         <div class="login-security">
           <strong>Seguranca do acesso</strong>
         <small>Use o usuario e senha enviados pela BOAMEC.</small>
+        </div>
+
+        <p class="login-register-hint">
+          Novo por aqui?
+          <a href="https://www.boasolucoesdigitais.com.br" target="_blank" rel="noopener noreferrer">Crie sua conta</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ── Tela de Onboarding (primeiro acesso sem empresa) ── -->
+    <section class="onboarding-screen" id="onboarding-screen" aria-labelledby="onboarding-title" style="display:none;">
+      <div class="onboarding-hero">
+        <span class="brand-mark onboarding-brand-mark">BM</span>
+        <h2>Bem-vindo à BOAMEC!</h2>
+        <p>Vamos configurar sua oficina em menos de 1 minuto.</p>
+      </div>
+
+      <div class="onboarding-card">
+        <div class="onboarding-header">
+          <p class="eyebrow">Primeiro acesso</p>
+          <h1 id="onboarding-title">Configure sua oficina</h1>
+          <p class="onboarding-subtitle">Preencha as informações básicas da sua oficina para começar. Você pode editar tudo depois.</p>
+        </div>
+
+        <form class="onboarding-form" id="onboarding-form">
+          <label class="field">
+            <span>Nome da oficina <em class="required">*</em></span>
+            <input id="onboarding-name" type="text" placeholder="Ex: Auto Center Silva" autocomplete="organization" required />
+          </label>
+
+          <label class="field">
+            <span>Seu nome</span>
+            <input id="onboarding-user-name" type="text" placeholder="Ex: João Silva" autocomplete="name" />
+          </label>
+
+          <label class="field">
+            <span>Telefone da oficina</span>
+            <input id="onboarding-phone" type="tel" placeholder="(00) 00000-0000" autocomplete="tel" />
+          </label>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>Razão Social</span>
+              <input id="onboarding-legal-name" type="text" placeholder="Opcional" />
+            </label>
+            <label class="field">
+              <span>CNPJ</span>
+              <input id="onboarding-cnpj" type="text" placeholder="00.000.000/0001-00" />
+            </label>
+          </div>
+
+          <p class="onboarding-error" id="onboarding-error" role="alert"></p>
+
+          <button class="onboarding-submit" id="onboarding-submit" type="submit">
+            Criar minha oficina
+          </button>
+        </form>
+
+        <div class="onboarding-trial-badge">
+          <span>🎉</span>
+          <span>30 dias grátis — sem cartão de crédito</span>
         </div>
       </div>
     </section>
