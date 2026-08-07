@@ -1028,6 +1028,16 @@
     const googleBtn = document.querySelector("[data-action='google-login']");
     if (googleBtn) googleBtn.classList.remove("hidden");
 
+    // Substitui o loginWithGoogle placeholder do app.js pelo real com Supabase
+    window.loginWithGoogle = async function () {
+      showLogin("Abrindo login do Google...");
+      const { error } = await client.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
+      });
+      if (error) showLogin(`Não foi possível abrir o login do Google: ${error.message || "verifique o provedor no Supabase"}.`);
+    };
+
     bindOnboardingEvents();
     console.info("[BOAMEC] Backend Supabase ativo.");
     window.BOAMEC_BACKEND._ready = true;
@@ -1039,7 +1049,6 @@
       loadSession();
     } else {
       console.info("[BOAMEC] Retorno OAuth detectado. Aguardando onAuthStateChange...");
-      callShowLogin("Finalizando acesso com Google...");
     }
   }
 
