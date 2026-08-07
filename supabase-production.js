@@ -919,12 +919,11 @@
       window.BOAMEC_BACKEND.subscription = null;
     }
 
-    if (event === "TOKEN_REFRESHED" && session?.user) {
+    if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
       window.BOAMEC_BACKEND.user = session.user;
-    }
-
-    if (event === "SIGNED_IN" && session?.user) {
-      window.BOAMEC_BACKEND.user = session.user;
+      if (!window.BOAMEC_BACKEND.profile) {
+        loadSession();
+      }
     }
   });
 
@@ -936,8 +935,11 @@
     if (googleBtn) googleBtn.classList.remove("hidden");
 
     bindOnboardingEvents();
-    console.info("[BOAMEC] Backend Supabase ativo.");
+    console.info("[BOAMEC] Backend Supabase ativo. Verificando sessão...");
     window.BOAMEC_BACKEND._ready = true;
+
+    // Executa verificação e restauração de sessão OAuth imediatamente
+    loadSession();
   }
 
   if (document.readyState === "loading") {
