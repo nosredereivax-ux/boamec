@@ -979,21 +979,45 @@
   /* ─────────────────────────────────────────────
      10. Listener de mudança de estado de auth
   ───────────────────────────────────────────── */
+  let _sessionInitialized = false;
+
   client.auth.onAuthStateChange(async (event, session) => {
-    console.info("[BOAMEC] Auth state change:", event);
+    console.info("[BOAMEC] Auth state change:", event, session?.user?.email || "sem usuario");
 
     if (event === "SIGNED_OUT") {
+      _sessionInitialized = false;
       window.BOAMEC_BACKEND.user = null;
       window.BOAMEC_BACKEND.profile = null;
       window.BOAMEC_BACKEND.company = null;
       window.BOAMEC_BACKEND.subscription = null;
+      return;
     }
 
+    // SIGNED_IN é disparado pelo Supabase quando o #access_token da URL é processado (OAuth)
+    // ou quando uma sessão salva no localStorage é restaurada
     if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
+      if (_sessionInitialized) return; // Evita chamadas duplicadas
+      _sessionInitialized = true;
+
       window.BOAMEC_BACKEND.user = session.user;
-      if (!window.BOAMEC_BACKEND.profile) {
-        loadSession();
+
+      const { profile, company, subscription } = await fetchProfileAndCompany(session.user.id);
+
+      cleanAuthUrl();
+
+      if (!profile) {
+        showOnboarding();
+        return;
       }
+
+      if (!checkSubscriptionBlock(subscription)) {
+        await client.auth.signOut();
+        return;
+      }
+
+      applyProfileToAppState(profile, company, subscription);
+      callShowApp();
+      callSetScreen("home");
     }
   });
 
@@ -1005,11 +1029,18 @@
     if (googleBtn) googleBtn.classList.remove("hidden");
 
     bindOnboardingEvents();
-    console.info("[BOAMEC] Backend Supabase ativo. Verificando sessão...");
+    console.info("[BOAMEC] Backend Supabase ativo.");
     window.BOAMEC_BACKEND._ready = true;
 
-    // Executa verificação e restauração de sessão OAuth imediatamente
-    loadSession();
+    // Se NÃO for um retorno OAuth (URL sem #access_token), verifica sessão salva normalmente
+    // Para retornos OAuth, o onAuthStateChange cuida de tudo ao processar o token da URL
+    const isOAuth = window.location.hash.includes("access_token=") || window.location.search.includes("code=");
+    if (!isOAuth) {
+      loadSession();
+    } else {
+      console.info("[BOAMEC] Retorno OAuth detectado. Aguardando onAuthStateChange...");
+      callShowLogin("Finalizando acesso com Google...");
+    }
   }
 
   if (document.readyState === "loading") {
