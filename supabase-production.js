@@ -343,35 +343,34 @@
   }
 
   async function loadSession() {
-    if (isOAuthCallback()) {
-      callShowLogin("Finalizando acesso com Google...");
-      const ok = await storeUrlSession();
-      if (!ok) return false;
-    }
-
+    // 1. Permite que o cliente Supabase leia a sessão da URL (#access_token=...) e do localStorage
     const { data: sessionData, error: sessionError } = await client.auth.getSession();
 
     if (sessionError) {
       console.error("[BOAMEC] Erro ao obter sessão Supabase:", sessionError);
+      cleanAuthUrl();
       callShowLogin(`Erro no Supabase: ${sessionError.message || "Chave anon inválida"}.`);
       return false;
     }
 
-    if (!sessionData?.session?.user) {
-      if (isOAuthCallback()) {
-        callShowLogin("Sessão do Google não encontrada. Tente entrar novamente.");
-      } else {
-        callShowLogin();
-      }
+    const user = sessionData?.session?.user;
+
+    if (!user) {
+      cleanAuthUrl();
+      callShowLogin();
       return false;
     }
 
-    const user = sessionData.session.user;
+    // Limpa os tokens da URL (#access_token=...) somente após a sessão ser validada
+    cleanAuthUrl();
+
     window.BOAMEC_BACKEND.user = user;
 
+    // 2. Busca perfil do usuário no banco de dados
     const { profile, company, subscription } = await fetchProfileAndCompany(user.id);
 
     if (!profile) {
+      // Usuário autenticado pelo Google, mas sem oficina cadastrada -> Exibe Onboarding!
       showOnboarding();
       return false;
     }
