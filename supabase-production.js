@@ -281,10 +281,11 @@
       });
 
       if (authError || !authData?.user) {
+        console.error("[BOAMEC] Detalhes do erro de login do Supabase:", authError);
         setLoginLoading(false);
         const msg = authError?.message || "Erro desconhecido";
         if (msg.toLowerCase().includes("invalid") || msg.toLowerCase().includes("credentials")) {
-          setLoginMessage("E-mail ou senha incorretos. Verifique seus dados.");
+          setLoginMessage(`E-mail ou senha incorretos. Verifique seus dados. (${msg})`);
         } else {
           setLoginMessage(`Erro ao entrar: ${msg}`);
         }
