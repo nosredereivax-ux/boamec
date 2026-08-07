@@ -351,8 +351,18 @@
 
     const { data: sessionData, error: sessionError } = await client.auth.getSession();
 
-    if (sessionError || !sessionData?.session?.user) {
-      callShowLogin();
+    if (sessionError) {
+      console.error("[BOAMEC] Erro ao obter sessão Supabase:", sessionError);
+      callShowLogin(`Erro no Supabase: ${sessionError.message || "Chave anon inválida"}.`);
+      return false;
+    }
+
+    if (!sessionData?.session?.user) {
+      if (isOAuthCallback()) {
+        callShowLogin("Sessão do Google não encontrada. Tente entrar novamente.");
+      } else {
+        callShowLogin();
+      }
       return false;
     }
 
