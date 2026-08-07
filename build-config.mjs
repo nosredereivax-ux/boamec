@@ -1,8 +1,19 @@
 import { writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const supabaseUrl =
+  process.env.SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env.VITE_SUPABASE_URL ||
+  "";
+
 const supabaseAnonKey =
   process.env.SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
   process.env.SUPABASE_PUBLISHABLE_KEY ||
   process.env.VITE_SUPABASE_ANON_KEY ||
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
@@ -17,5 +28,6 @@ const config = {
 };
 
 const body = `window.BOAMEC_CONFIG = ${JSON.stringify(config, null, 2)};\n`;
-writeFileSync(new URL("../config.js", import.meta.url), body, "utf8");
-console.log(`BOAMEC config generated for ${config.env}. Supabase: ${config.productionAuth ? "enabled" : "disabled"}`);
+const configPath = join(__dirname, "config.js");
+writeFileSync(configPath, body, "utf8");
+console.log(`BOAMEC config generated at ${configPath} for ${config.env}. Supabase: ${config.productionAuth ? "enabled" : "disabled"}`);
