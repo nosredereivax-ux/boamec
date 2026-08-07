@@ -385,27 +385,88 @@
     const errEl = document.getElementById("onboarding-error");
     if (errEl) errEl.textContent = "";
 
-    try {
-      const { data, error } = await client.rpc("criar_empresa_trial", {
-        p_nome_fantasia: nomFantasia,
-        p_razao_social: razaoSocial || null,
-        p_cnpj: cnpj || null,
-        p_telefone: telefone || null,
-        p_usuario_nome: nomeUsuario || null,
-      });
+    const user = window.BOAMEC_BACKEND.user;
+    if (!user) {
+      if (errEl) errEl.textContent = "Sessão não encontrada. Tente entrar novamente.";
+      if (btn) { btn.disabled = false; btn.textContent = "Criar minha oficina"; }
+      return false;
+    }
 
-      if (error) {
-        console.error("[BOAMEC] Erro ao criar empresa:", error);
-        if (errEl) errEl.textContent = `Erro: ${error.message || "Não foi possível criar a empresa."}`;
-        if (btn) { btn.disabled = false; btn.textContent = "Criar minha oficina"; }
-        return false;
+    try {
+      let companyId = null;
+
+      // 1. Tenta via RPC primeiro
+      try {
+        const { data, error } = await client.rpc("criar_empresa_trial", {
+          p_nome_fantasia: nomFantasia,
+          p_razao_social: razaoSocial || null,
+          p_cnpj: cnpj || null,
+          p_telefone: telefone || null,
+          p_usuario_nome: nomeUsuario || null,
+        });
+        if (!error && data) companyId = data;
+        else if (error) console.warn("[BOAMEC] RPC criar_empresa_trial indisponível, usando fallback direto:", error.message);
+      } catch (rpcErr) {
+        console.warn("[BOAMEC] Erro na RPC, aplicando fallback:", rpcErr);
       }
 
-      const user = window.BOAMEC_BACKEND.user;
+      // 2. Fallback direto se a RPC não retornou ID
+      if (!companyId) {
+        const { data: newComp, error: compErr } = await client
+          .from("empresas")
+          .insert({
+            nome_fantasia: nomFantasia,
+            razao_social: razaoSocial || null,
+            cnpj: cnpj || null,
+            telefone: telefone || null,
+            email: user.email || null,
+            plano: "trial",
+            status: "trial",
+            data_vencimento: new Date(Date.now() + 30 * 86400000).toISOString(),
+            criado_por: user.id
+          })
+          .select("id")
+          .single();
+
+        if (compErr || !newComp) {
+          throw new Error(compErr?.message || "Não foi possível cadastrar a empresa no banco.");
+        }
+        companyId = newComp.id;
+
+        const userName = nomeUsuario || user.user_metadata?.full_name || user.user_metadata?.name || (user.email ? user.email.split("@")[0] : "Administrador");
+
+        const { error: userErr } = await client
+          .from("usuarios")
+          .insert({
+            id: user.id,
+            empresa_id: companyId,
+            nome: userName,
+            email: user.email || "",
+            cargo: "Administrador",
+            permissoes: ["inicio", "agenda", "os", "clientes", "financeiro", "mecanicos", "produtos", "relatorios", "configuracoes"],
+            status: "ativo",
+            criado_por: user.id
+          });
+
+        if (userErr && !userErr.message.includes("duplicate")) {
+          throw new Error(userErr.message || "Erro ao criar perfil de usuário.");
+        }
+
+        await client
+          .from("assinaturas")
+          .insert({
+            empresa_id: companyId,
+            plano: "trial",
+            status: "trial",
+            data_inicio: new Date().toISOString(),
+            data_fim: new Date(Date.now() + 30 * 86400000).toISOString()
+          });
+      }
+
       const { profile, company, subscription } = await fetchProfileAndCompany(user.id);
 
       if (!profile) {
-        if (errEl) errEl.textContent = "Empresa criada, mas não foi possível carregar o perfil. Recarregue a página.";
+        if (errEl) errEl.textContent = "Empresa registrada, recarregue a página para acessar o painel.";
         if (btn) { btn.disabled = false; btn.textContent = "Criar minha oficina"; }
         return false;
       }
@@ -419,7 +480,7 @@
 
     } catch (err) {
       console.error("[BOAMEC] Erro inesperado ao registrar empresa:", err);
-      if (errEl) errEl.textContent = "Erro inesperado. Tente novamente.";
+      if (errEl) errEl.textContent = `Erro: ${err.message || "Tente novamente."}`;
       if (btn) { btn.disabled = false; btn.textContent = "Criar minha oficina"; }
       return false;
     }
