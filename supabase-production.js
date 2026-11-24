@@ -31,7 +31,7 @@
       document.getElementById("signup-company").required = signup;
       document.getElementById("signup-name").required = signup;
       document.getElementById("login-password").autocomplete = signup ? "new-password" : "current-password";
-      document.querySelector("[data-action='login']").textContent = signup ? "Criar conta" : "Entrar";
+      document.querySelector("[data-action='login']").textContent = signup ? "Criar conta grátis" : "Entrar";
       document.getElementById("login-remember-field").hidden = signup;
       document.getElementById("login-google").hidden = signup;
       document.getElementById("login-security").hidden = signup;
@@ -134,7 +134,7 @@
     if (companyInput) companyInput.required = enabled;
     if (nameInput) nameInput.required = enabled;
     if (passwordInput) passwordInput.autocomplete = enabled ? "new-password" : "current-password";
-    if (submit) submit.textContent = enabled ? "Criar conta" : "Entrar";
+    if (submit) submit.textContent = enabled ? "Criar conta grátis" : "Entrar";
     if (remember) remember.hidden = enabled;
     if (google) google.hidden = enabled;
     if (security) security.hidden = enabled;
@@ -148,17 +148,26 @@
 
   document.getElementById("login-form")?.addEventListener("submit", (event) => {
     const form = event.currentTarget;
-    if (form?.dataset.mode !== "signup") return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    registerAccount();
+
+    if (form?.dataset.mode === "signup") {
+      registerAccount();
+      return;
+    }
+
+    const email = document.getElementById("login-email")?.value.trim().toLowerCase() || "";
+    const password = document.getElementById("login-password")?.value || "";
+    loginWithEmailPassword(email, password);
   }, true);
 
   function setLoginLoading(loading) {
     const btn = document.querySelector("[data-action='login']");
     if (!btn) return;
     btn.disabled = loading;
-    btn.textContent = loading ? "Entrando..." : "Entrar";
+    btn.textContent = loading
+      ? (document.getElementById("login-form")?.dataset.mode === "signup" ? "Criando conta..." : "Entrando...")
+      : (document.getElementById("login-form")?.dataset.mode === "signup" ? "Criar conta grátis" : "Entrar");
   }
 
   function callShowLogin(msg) {
@@ -439,7 +448,7 @@
     } finally {
       if (submit) {
         submit.disabled = false;
-        submit.textContent = "Criar conta";
+        submit.textContent = document.getElementById("login-form")?.dataset.mode === "signup" ? "Criar conta grátis" : "Entrar";
       }
     }
   }
