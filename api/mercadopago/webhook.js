@@ -42,7 +42,21 @@ export default async function handler(req, res) {
       return response(res, 400, { error: "Valor ou moeda do pagamento inválido." });
     }
 
-    const dataInicio = new Date();
+    const approvedAt = payment.date_approved ? new Date(payment.date_approved) : new Date();
+    const dataInicio = Number.isNaN(approvedAt.getTime()) ? new Date() : approvedAt;
+    const existingUrl = new URL(`${supabaseUrl}/rest/v1/assinaturas`);
+    existingUrl.searchParams.set("empresa_id", `eq.${empresaId}`);
+    existingUrl.searchParams.set("select", "data_inicio,status,plano");
+    const existingResponse = await fetch(existingUrl, {
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+    });
+    if (!existingResponse.ok) return response(res, 502, { error: "Não foi possível verificar a assinatura atual." });
+    const existingRows = await existingResponse.json();
+    const alreadyApplied = existingRows.some((row) =>
+      row.status === "ativo" && row.plano === plano && Date.parse(row.data_inicio) === dataInicio.getTime()
+    );
+    if (alreadyApplied) return response(res);
+
     const dataFim = new Date(dataInicio.getTime() + PLAN_DAYS[plano] * 24 * 60 * 60 * 1000);
     const updateUrl = new URL(`${supabaseUrl}/rest/v1/assinaturas`);
     updateUrl.searchParams.set("empresa_id", `eq.${empresaId}`);
