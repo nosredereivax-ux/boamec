@@ -18,6 +18,31 @@
 
   if (!enabled) {
     window.BOAMEC_BACKEND = { enabled: false };
+    const form = document.getElementById("login-form");
+    const toggle = document.getElementById("login-mode-toggle");
+    toggle?.addEventListener("click", () => {
+      const signup = form?.dataset.mode !== "signup";
+      if (form) form.dataset.mode = signup ? "signup" : "login";
+      document.getElementById("login-title").textContent = signup ? "Criar sua conta" : "Entrar no sistema";
+      toggle.textContent = signup ? "Já tenho uma conta" : "Crie sua conta";
+      document.getElementById("login-register-copy").textContent = signup ? "Já tem cadastro?" : "Novo por aqui?";
+      document.getElementById("signup-company-field").hidden = !signup;
+      document.getElementById("signup-name-field").hidden = !signup;
+      document.getElementById("signup-company").required = signup;
+      document.getElementById("signup-name").required = signup;
+      document.getElementById("login-password").autocomplete = signup ? "new-password" : "current-password";
+      document.querySelector("[data-action='login']").textContent = signup ? "Criar conta" : "Entrar";
+      document.getElementById("login-remember-field").hidden = signup;
+      document.getElementById("login-google").hidden = signup;
+      document.getElementById("login-security").hidden = signup;
+      document.getElementById("login-error").textContent = "";
+    });
+    form?.addEventListener("submit", (event) => {
+      if (form.dataset.mode !== "signup") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      document.getElementById("login-error").textContent = "O cadastro está temporariamente indisponível. Tente novamente mais tarde.";
+    }, true);
     console.info("[BOAMEC] Modo local ativo (productionAuth desativado ou bibliotecas ausentes).");
     return;
   }
@@ -58,6 +83,7 @@
 
     // Auth público
     loginWithEmailPassword,
+    registerAccount,
     logoutUser: signOut,
     loadSession,
     registerCompany,
@@ -84,6 +110,49 @@
     const el = document.getElementById("login-error");
     if (el) el.textContent = msg || "";
   }
+
+  function setSignupMode(enabled) {
+    const loginTitle = document.getElementById("login-title");
+    const toggle = document.getElementById("login-mode-toggle");
+    const toggleCopy = document.getElementById("login-register-copy");
+    const companyField = document.getElementById("signup-company-field");
+    const nameField = document.getElementById("signup-name-field");
+    const companyInput = document.getElementById("signup-company");
+    const nameInput = document.getElementById("signup-name");
+    const passwordInput = document.getElementById("login-password");
+    const submit = document.querySelector("[data-action='login']");
+    const remember = document.getElementById("login-remember-field");
+    const google = document.getElementById("login-google");
+    const security = document.getElementById("login-security");
+
+    document.getElementById("login-form")?.setAttribute("data-mode", enabled ? "signup" : "login");
+    if (loginTitle) loginTitle.textContent = enabled ? "Criar sua conta" : "Entrar no sistema";
+    if (toggle) toggle.textContent = enabled ? "Já tenho uma conta" : "Crie sua conta";
+    if (toggleCopy) toggleCopy.textContent = enabled ? "Já tem cadastro?" : "Novo por aqui?";
+    if (companyField) companyField.hidden = !enabled;
+    if (nameField) nameField.hidden = !enabled;
+    if (companyInput) companyInput.required = enabled;
+    if (nameInput) nameInput.required = enabled;
+    if (passwordInput) passwordInput.autocomplete = enabled ? "new-password" : "current-password";
+    if (submit) submit.textContent = enabled ? "Criar conta" : "Entrar";
+    if (remember) remember.hidden = enabled;
+    if (google) google.hidden = enabled;
+    if (security) security.hidden = enabled;
+    setLoginMessage("");
+  }
+
+  document.getElementById("login-mode-toggle")?.addEventListener("click", () => {
+    const form = document.getElementById("login-form");
+    setSignupMode(form?.dataset.mode !== "signup");
+  });
+
+  document.getElementById("login-form")?.addEventListener("submit", (event) => {
+    const form = event.currentTarget;
+    if (form?.dataset.mode !== "signup") return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    registerAccount();
+  }, true);
 
   function setLoginLoading(loading) {
     const btn = document.querySelector("[data-action='login']");
@@ -316,6 +385,62 @@
       setLoginLoading(false);
       setLoginMessage("Erro inesperado. Tente novamente.");
       return false;
+    }
+  }
+
+  async function registerAccount() {
+    const submit = document.querySelector("[data-action='login']");
+    const email = document.getElementById("login-email")?.value.trim().toLowerCase() || "";
+    const password = document.getElementById("login-password")?.value || "";
+    const nome_fantasia = document.getElementById("signup-company")?.value.trim() || "";
+    const nome = document.getElementById("signup-name")?.value.trim() || "";
+
+    setLoginMessage("");
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Criando conta...";
+    }
+
+    try {
+      const { data, error } = await client.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: { nome_fantasia, nome },
+        },
+      });
+
+      if (error) {
+        const detail = (error.message || "").toLowerCase();
+        if (detail.includes("already registered") || detail.includes("already been registered")) {
+          setLoginMessage("Não foi possível criar a conta com esses dados. Verifique o e-mail ou tente entrar.");
+        } else if (detail.includes("password") || detail.includes("weak")) {
+          setLoginMessage("A senha não atende aos requisitos. Escolha uma senha mais forte e tente novamente.");
+        } else if (error.status === 429) {
+          setLoginMessage("Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.");
+        } else {
+          console.error("[BOAMEC] Falha inesperada no cadastro:", error);
+          setLoginMessage("Não foi possível concluir o cadastro agora. Tente novamente mais tarde.");
+        }
+        return false;
+      }
+
+      if (data.session && data.user) {
+        await loginWithEmailPassword(email, password);
+      } else {
+        setLoginMessage("Cadastro iniciado. Verifique seu e-mail e confirme o endereço para acessar o painel.");
+      }
+      return true;
+    } catch (error) {
+      console.error("[BOAMEC] Erro inesperado no cadastro:", error);
+      setLoginMessage("Ocorreu um erro inesperado ao criar sua conta. Tente novamente.");
+      return false;
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = "Criar conta";
+      }
     }
   }
 

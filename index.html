@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BOAMEC</title>
-    <link rel="stylesheet" href="./styles.css?v=2" />
+    <link rel="stylesheet" href="./styles.css?v=3" />
   </head>
   <body>
     <section class="login-screen" id="login-screen" aria-labelledby="login-title">
@@ -24,35 +24,43 @@
         </div>
 
         <form class="login-form" id="login-form">
+          <label class="field signup-field" id="signup-company-field" hidden>
+            <span>Nome da Oficina / Empresa</span>
+            <input id="signup-company" name="nome_fantasia" type="text" autocomplete="organization" placeholder="Ex: Auto Center Silva" />
+          </label>
+          <label class="field signup-field" id="signup-name-field" hidden>
+            <span>Seu Nome</span>
+            <input id="signup-name" name="nome" type="text" autocomplete="name" placeholder="Ex: João Silva" />
+          </label>
           <label class="field">
             <span>E-mail</span>
-            <input id="login-email" type="email" autocomplete="username" placeholder="teste1@boamec.com" />
+            <input id="login-email" type="email" autocomplete="username" placeholder="teste1@boamec.com" required />
           </label>
           <label class="field">
             <span>Senha</span>
-            <input id="login-password" type="password" autocomplete="current-password" placeholder="Digite sua senha" />
+            <input id="login-password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required minlength="6" />
           </label>
-          <label class="login-check">
+          <label class="login-check" id="login-remember-field">
             <input id="login-remember" type="checkbox" checked />
             <span>Manter conectado neste aparelho</span>
           </label>
-          <p class="login-error" id="login-error" role="alert"></p>
+          <p class="login-error" id="login-error" role="alert" aria-live="polite"></p>
           <aside class="payment-feedback" id="payment-feedback-login" role="status" aria-live="polite" hidden></aside>
           <button class="login-submit" data-action="login" type="submit">Entrar</button>
-          <button class="login-google" data-action="google-login" type="button">
+          <button class="login-google" data-action="google-login" id="login-google" type="button">
             <span class="google-mark">G</span>
             <span>Entrar com Google</span>
           </button>
         </form>
 
-        <div class="login-security">
+        <div class="login-security" id="login-security">
           <strong>Seguranca do acesso</strong>
         <small>Use o usuario e senha enviados pela BOAMEC.</small>
         </div>
 
         <p class="login-register-hint">
-          Novo por aqui?
-          <a href="https://www.boasolucoesdigitais.com.br" target="_blank" rel="noopener noreferrer">Crie sua conta</a>
+          <span id="login-register-copy">Novo por aqui?</span>
+          <button class="login-mode-toggle" id="login-mode-toggle" type="button">Crie sua conta</button>
         </p>
       </div>
     </section>
@@ -593,6 +601,6 @@
     <script src="./config.js?v=2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./app.js?v=2"></script>
-    <script src="./supabase-production.js?v=2"></script>
+    <script src="./supabase-production.js?v=3"></script>
   </body>
 </html>

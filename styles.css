@@ -166,6 +166,28 @@ body.login-active .login-screen {
   gap: 14px;
 }
 
+.login-card [hidden] {
+  display: none !important;
+}
+
+.login-mode-toggle {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #d9a2ff;
+  font: inherit;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.login-mode-toggle:focus-visible {
+  outline: 2px solid #d9a2ff;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 .login-check {
   display: flex;
   align-items: center;
