@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10141b" />
+    <meta name="description" content="Escolha um plano BOAMEC e mantenha sua oficina em movimento." />
+    <title>Planos | BOAMEC</title>
+    <link rel="stylesheet" href="./billing.css" />
+  </head>
+  <body>
+    <main class="billing-shell">
+      <header class="billing-header">
+        <a class="brand-link" href="/" aria-label="Voltar ao BOAMEC"><span class="brand-mark">BM</span><span>BOAMEC</span></a>
+        <a class="back-link" href="/">Voltar ao sistema</a>
+      </header>
+
+      <section class="plans-intro" aria-labelledby="plans-title">
+        <p class="eyebrow">Planos BOAMEC</p>
+        <h1 id="plans-title">Sua oficina merece seguir em frente.</h1>
+        <p>Escolha o melhor plano para sua empresa e mantenha o acesso completo ao sistema.</p>
+      </section>
+
+      <div class="payment-feedback" id="payment-feedback" role="status" aria-live="polite" hidden></div>
+      <p class="plans-error" id="plans-error" role="alert"></p>
+
+      <section class="plans-grid" aria-label="Opções de assinatura">
+        <article class="plan-card">
+          <p class="plan-period">Cobrança mensal</p>
+          <h2>Plano Mensal</h2>
+          <p class="plan-price"><strong>R$ 97</strong><span>,00 / mês</span></p>
+          <ul>
+            <li>Acesso completo ao BOAMEC por 30 dias</li>
+            <li>Suporte e atualizações incluídas</li>
+          </ul>
+          <button class="plan-button secondary-plan" type="button" data-plan="mensal" disabled>Assinar Plano Mensal</button>
+        </article>
+
+        <article class="plan-card featured-plan">
+          <span class="plan-badge">Mais vantajoso</span>
+          <p class="plan-period">Pagamento anual</p>
+          <h2>Plano Anual</h2>
+          <p class="plan-price"><strong>R$ 697</strong><span>,00 / ano</span></p>
+          <p class="annual-equivalent">Equivalente a R$ 58,08/mês · economia de R$ 467,00</p>
+          <ul>
+            <li>Acesso completo ao BOAMEC por 365 dias</li>
+            <li>Suporte e atualizações incluídas</li>
+            <li>Parcelamento disponível no Mercado Pago</li>
+          </ul>
+          <button class="plan-button primary-plan" type="button" data-plan="anual" disabled>Assinar Plano Anual</button>
+        </article>
+      </section>
+      <p class="billing-secure">Pagamento processado com segurança pelo Mercado Pago.</p>
+    </main>
+    <script src="./config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./planos.js"></script>
+  </body>
+</html>

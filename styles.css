@@ -2911,6 +2911,14 @@ body.login-active .login-screen {
 }
 
 /* Responsivo: empilha em telas menores */
+.subscription-banner { display:flex; align-items:center; justify-content:space-between; gap:14px; margin:0 0 18px; padding:12px 16px; border:1px solid rgba(83,104,232,.24); border-radius:10px; background:#f0f2ff; color:#26357d; }
+.subscription-banner p { margin:0; font-size:14px; }
+.subscription-banner a { flex:0 0 auto; color:#293b9b; font-size:13px; font-weight:750; }
+.payment-feedback { margin:0 0 18px; padding:14px 16px; border:1px solid #465069; border-radius:10px; background:#181e29; color:#dce2f2; line-height:1.5; }
+.payment-feedback.success { border-color:#27694d; background:#12271f; color:#a7eccb; }
+.payment-feedback.pending { border-color:#80642c; background:#2a2316; color:#f2d38c; }
+.payment-feedback.failure { border-color:#76414b; background:#2b1b20; color:#ffbdc6; }
+[hidden] { display:none !important; }
 @media (max-width: 640px) {
   .onboarding-screen {
     flex-direction: column;

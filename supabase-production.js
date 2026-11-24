@@ -116,10 +116,8 @@
      5. Verificação de assinatura
   ───────────────────────────────────────────── */
   function isSubscriptionValid(subscription) {
-    if (!subscription) return false;
-    if (["vencido", "cancelado"].includes(subscription.status)) return false;
-    if (!subscription.data_fim) return true;
-    return new Date(subscription.data_fim) >= new Date();
+    if (!subscription || !["ativo", "trial"].includes(subscription.status) || !subscription.data_fim) return false;
+    return new Date(subscription.data_fim) > new Date();
   }
 
   function trialDaysLeft(subscription) {
@@ -259,9 +257,7 @@
 
   function checkSubscriptionBlock(subscription) {
     if (!isSubscriptionValid(subscription)) {
-      callShowLogin(
-        "Sua assinatura expirou. Entre em contato com a BOAMEC para renovar: (61) 98342-5490."
-      );
+      window.location.assign("/planos");
       return false;
     }
     return true;
@@ -304,7 +300,6 @@
 
       if (!checkSubscriptionBlock(subscription)) {
         setLoginLoading(false);
-        await client.auth.signOut();
         return false;
       }
 
@@ -376,10 +371,7 @@
       return false;
     }
 
-    if (!checkSubscriptionBlock(subscription)) {
-      await client.auth.signOut();
-      return false;
-    }
+    if (!checkSubscriptionBlock(subscription)) return false;
 
     applyProfileToAppState(profile, company, subscription);
 

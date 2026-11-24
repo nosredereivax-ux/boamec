@@ -37,6 +37,7 @@
             <span>Manter conectado neste aparelho</span>
           </label>
           <p class="login-error" id="login-error" role="alert"></p>
+          <aside class="payment-feedback" id="payment-feedback-login" role="status" aria-live="polite" hidden></aside>
           <button class="login-submit" data-action="login" type="submit">Entrar</button>
           <button class="login-google" data-action="google-login" type="button">
             <span class="google-mark">G</span>
@@ -107,7 +108,7 @@
 
         <div class="onboarding-trial-badge">
           <span>🎉</span>
-          <span>30 dias grátis — sem cartão de crédito</span>
+          <span>7 dias grátis — sem cartão de crédito</span>
         </div>
       </div>
     </section>
@@ -176,6 +177,11 @@
       </aside>
 
       <main class="main-area">
+        <aside class="subscription-banner" id="subscription-banner" aria-live="polite" hidden>
+          <p id="subscription-banner-copy">Seu teste grátis está ativo.</p>
+          <a href="/planos">Assinar agora</a>
+        </aside>
+        <aside class="payment-feedback" id="payment-feedback" role="status" aria-live="polite" hidden></aside>
         <section class="screen active" id="screen-home" aria-labelledby="home-title">
           <header class="topbar">
             <div>
