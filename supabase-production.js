@@ -427,7 +427,7 @@
       }
 
       if (data.session && data.user) {
-        await loginWithEmailPassword(email, password);
+        await loadSession();
       } else {
         setLoginMessage("Cadastro iniciado. Verifique seu e-mail e confirme o endereço para acessar o painel.");
       }
